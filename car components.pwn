@@ -556,3 +556,106 @@ Dialog:CONFIRM_PURCHASE(playerid, response, listitem, inputtext[])
 	}
     return 1;
 }
+
+
+/*
+Dialog:TMEN(playerid, response, listitem, inputtext[]) 
+{
+    if (response) 
+    {
+        if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+        new digcap[MAX_CAP];
+        new vehid = GetPlayerVehicleID(playerid);
+        new themodel = GetVehicleModel(vehid);
+        format(digcap, sizeof(digcap), "{FFFFFF}%s %s Tuning Menu", gggGlobalVehicleNames[themodel - 400], gCompSlot[listitem]);
+        
+        new count = 0, slots[MAX_INF];
+        strcat(slots, "{FFFFFF}Type\tPrice");
+        
+        // Loop through each component in the list
+        for(new cid = 1000; cid < 1194; cid++)
+        {
+            if(!strcmp(gCompSlot[listitem], componentlist[cid - 1000][comppart], true))
+            {
+                // Check if the vehicle model can have the current component
+                if(VehicleCanHaveComponent(themodel, cid))
+                {
+                    new temp[MAX_ROWS];
+                    activecomponents[vehid][count] = cid; // Save component id in activecomponents array
+                    format(temp, sizeof(temp), "\n%s\t$%d", componentlist[cid - 1000][comptype], componentlist[cid - 1000][compcost]);
+                    strcat(slots, temp);
+                    count++;
+                    nocomps[vehid] = false;
+                }
+                
+                if(count == MAX_ROWS)
+                {
+                    break; // Exit the loop if the max rows are reached
+                }
+            }
+        }
+        
+        // If no components were found for this vehicle, notify the player
+        if(count == 0)
+        {
+            strcat(slots, "\nTHIS VEHICLE DON'T HAVE ANY COMPONENTS");
+            nocomps[vehid] = true;
+        }
+        
+        Dialog_Show(playerid, TSO, DIALOG_STYLE_TABLIST_HEADERS, digcap, slots, "OK", "Back");
+    }
+    return 1;
+}
+
+new confmoney[MAX_PLAYERS];
+new confcompid[MAX_VEHICLES];
+
+Dialog:TSO(playerid, response, listitem, inputtext[]) 
+{
+    if (response) 
+    {
+        new vid = GetPlayerVehicleID(playerid);
+        
+        // If no components are available for the vehicle, go back to the main menu
+        if(nocomps[vid] == true) return ShowMainDialog(playerid);
+        
+        // Add the selected component to the vehicle
+        AddVehicleComponent(vid, activecomponents[vid][listitem]);
+        
+        new Float:posX, Float:posY, Float:posZ;
+        GetPlayerPos(playerid, posX, posY, posZ);
+        PlayerPlaySound(playerid, 1133, posX, posY, posZ); // Play a sound when the component is added
+        
+        // Save the cost of the component and the id of the component
+        confmoney[playerid] = componentlist[activecomponents[vid][listitem]][compcost];
+        confcompid[vid] = activecomponents[vid][listitem];
+        
+        // Show confirmation dialog
+        Dialog_Show(playerid, CONFIRM_PURCHASE, DIALOG_STYLE_MSGBOX, "{FFFFFF}CONFIRM PURCHASE", "{FFFFFF}CONFIRM PURCHASE", "PURCHASE", "Back");  
+    }
+    else
+    {
+        ShowMainDialog(playerid);
+    }
+    return 1;
+}
+
+Dialog:CONFIRM_PURCHASE(playerid, response, listitem, inputtext[]) 
+{
+    if (response) 
+    {
+        // Deduct the component cost from the player's money
+        GivePlayerMoney(playerid, -confmoney[playerid]);
+    }
+    else
+    {
+        new vid = GetPlayerVehicleID(playerid);
+        
+        // Remove the component if the player cancels the purchase
+        RemoveVehicleComponent(vid, confcompid[vid]);
+        
+        ShowMainDialog(playerid);
+    }
+    return 1;
+}
+*/
