@@ -1,6 +1,4 @@
-Here's a detailed `README.md` for your GitHub repository:
 
-```markdown
 # OPEN.MP Vehicle Tune Menu
 
 A SA-MP (San Andreas Multiplayer) filterscript that adds a vehicle tuning menu, allowing players to customize their vehicles with various components such as spoilers, bumpers, nitro, wheels, and more. The components are loaded from a configuration and can be purchased and applied in-game.
@@ -103,6 +101,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 For any questions or issues, please open an issue in the GitHub repository.
-```
-
-This `README.md` provides a clear description of the script's functionality, installation steps, and usage details. It also explains the code structure, components, and how players interact with the menu. Let me know if you need more details or further modifications!
