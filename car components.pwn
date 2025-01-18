@@ -659,3 +659,376 @@ Dialog:CONFIRM_PURCHASE(playerid, response, listitem, inputtext[])
     return 1;
 }
 */
+
+/*
+#include <eSelection>
+
+new activecomponents[MAX_VEHICLES][200];
+
+//SA-MP LIMITS
+#define MAX_ROWS 255
+#define MAX_COLUMN 127
+#define MAX_CAP 63
+#define MAX_INF 3500
+
+new bool:nocomps[MAX_VEHICLES];
+
+// define an ID for the model selection menu below
+#define MODEL_SELECTION_COMP_MENU (0)
+
+ShowCompModelMenu(playerid, listitem)
+{
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+	new vehid = GetPlayerVehicleID(playerid);
+	new themodel = GetVehicleModel(vehid);
+	new digcap[64];
+	format(digcap, sizeof(digcap), "{FFFFFF}%s Tuning Menu", gggGlobalVehicleNames[themodel - 400]);
+    
+	// create a dynamic PawnPlus list to populate with models.
+    // you don't need to worry about deleting this list, it's handled by the include once it's passed to it
+    new List:Copms = list_new();
+
+	new count = 0, slots[MAX_INF];
+	//strcat(slots, "\\c{FFFFFF}Type\tPrice");
+	for(new cid = 1000; cid < 1194; cid++)
+	{
+		//new c = cid - 1000;
+		if(!strcmp(gCompSlot[listitem], componentlist[cid - 1000][comppart], true))
+		{
+			//printf("pID = %d, vID = %d, mID = %d, cid = %d, c = %d, listitem = %d, gCompSlot[listitem] = %s, componentlist[c][comppart] = %s, count = %d, activecomponents[vehid][count] = %d, slots = %s, digcap = %s", playerid, vehid, themodel, cid, c, listitem, gCompSlot[listitem], componentlist[c][comppart], count, activecomponents[vehid][count], slots, digcap);
+			if(VehicleCanHaveComponent(themodel, cid))
+			{
+				new temp[MAX_ROWS];
+				activecomponents[vehid][count] = cid; // Save component cid in the first slot of activecomponents
+		        format(temp, sizeof(temp), "\n%i\t%s\t$%d", cid, componentlist[cid - 1000][comptype], componentlist[cid - 1000][compcost]);
+				strcat(slots, temp);
+				count++;
+				nocomps[vehid] = false;
+				AddModelMenuItem(Copms, cid, temp);
+			}
+			if(count == MAX_ROWS)
+            {
+                break;
+            }
+            else continue;
+	    }
+	}
+	if(count == 0)
+	{
+		strcat(slots, "\nTHIS VEHICLE DON'T HAVE ANY COMPONENTS");
+		nocomps[vehid] = true;
+		AddModelMenuItem(Copms, 0, slots);
+	}
+/*		
+    // add skin IDs 0, 1, 29 and 60 with "cool people only" text above skin ID 29.
+    AddModelMenuItem(Copms, 0);
+    AddModelMenuItem(Copms, 1);
+    AddModelMenuItem(Copms, 29, "Cool people only");
+    AddModelMenuItem(Copms, 60);
+*/
+    // show the menu to the player
+    ShowModelSelectionMenu(playerid, digcap, MODEL_SELECTION_COMP_MENU, Copms);
+	return 1;
+}
+
+// model selection response
+public OnModelSelectionResponse(playerid, extraid, index, modelid, response)
+{
+    // make sure the extraid matches the skin menu ID
+    if(extraid == MODEL_SELECTION_COMP_MENU)
+    {
+        // make sure the player actually clicked on a model and not the close button
+        if(response == MODEL_RESPONSE_SELECT)
+        {
+            // assign the player the skin of their choosing
+            SetPlayerSkin(playerid, modelid);
+            return 1;
+        }
+		if(response == MODEL_RESPONSE_CANCEL)
+		{
+			if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+			new vehid = GetPlayerVehicleID(playerid);
+			new themodel = GetVehicleModel(vehid);
+			new digcap[64];
+			format(digcap, sizeof(digcap), "{FFFFFF}%s Tuning Menu", gggGlobalVehicleNames[themodel - 400]);
+		    
+			// create a dynamic PawnPlus list to populate with models.
+		    // you don't need to worry about deleting this list, it's handled by the include once it's passed to it
+		    new List:Copms = list_new();
+		
+			new count = 0, slots[MAX_INF];
+			//strcat(slots, "\\c{FFFFFF}Type\tPrice");
+			for(new cid = 1000; cid < 1194; cid++)
+			{
+				//new c = cid - 1000;
+				if(!strcmp(gCompSlot[index], componentlist[cid - 1000][comppart], true))
+				{
+					//printf("pID = %d, vID = %d, mID = %d, cid = %d, c = %d, listitem = %d, gCompSlot[listitem] = %s, componentlist[c][comppart] = %s, count = %d, activecomponents[vehid][count] = %d, slots = %s, digcap = %s", playerid, vehid, themodel, cid, c, listitem, gCompSlot[listitem], componentlist[c][comppart], count, activecomponents[vehid][count], slots, digcap);
+					if(VehicleCanHaveComponent(themodel, cid))
+					{
+						new temp[MAX_ROWS];
+						activecomponents[vehid][count] = cid; // Save component cid in the first slot of activecomponents
+				        format(temp, sizeof(temp), "\n%i\t%s\t$%d", cid, componentlist[cid - 1000][comptype], componentlist[cid - 1000][compcost]);
+						strcat(slots, temp);
+						count++;
+						nocomps[vehid] = false;
+						AddModelMenuItem(Copms, cid, temp);
+					}
+					if(count == MAX_ROWS)
+		            {
+		                break;
+		            }
+		            else continue;
+			    }
+			}
+			if(count == 0)
+			{
+				strcat(slots, "\nTHIS VEHICLE DON'T HAVE ANY COMPONENTS");
+				nocomps[vehid] = true;
+				AddModelMenuItem(Copms, 0, slots);
+			}
+		/*		
+		    // add skin IDs 0, 1, 29 and 60 with "cool people only" text above skin ID 29.
+		    AddModelMenuItem(Copms, 0);
+		    AddModelMenuItem(Copms, 1);
+		    AddModelMenuItem(Copms, 29, "Cool people only");
+		    AddModelMenuItem(Copms, 60);
+		*/
+		    // show the menu to the player
+		    ShowModelSelectionMenu(playerid, digcap, MODEL_SELECTION_COMP_MENU, Copms);
+		}
+    }
+	return 1;
+}
+
+stock ShowMainDialog(playerid)
+{
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+	new vehid = GetPlayerVehicleID(playerid);
+	new themodel = GetVehicleModel(vehid);
+	new digcap[64];
+	format(digcap, sizeof(digcap), "{FFFFFF}%s Tuning Menu", gggGlobalVehicleNames[themodel - 400]);
+	Dialog_Show(playerid, TMEN, DIALOG_STYLE_LIST, digcap, "{FFFFFF}SPOILER\nHOOD\nROOF\nSIDESKIRT\nLAMPS\nNITRO\nEXHAUST\nWHEELS\nSTEREO\nHYDRAULICS\nFRONT BUMPER\nREAR BUMPER\nVents\nFRONT BULLBAR\nREAR BULLBAR\nFront Sign\nBullbar\nPaint Jobs\nColors\nNeons", "OK", "CLOSE");
+	return 1;
+}
+
+CMD:tuneme(playerid, params[])
+{
+	ShowMainDialog(playerid);
+	return true;
+}
+
+Dialog:TMEN(playerid, response, listitem, inputtext[]) 
+{
+	ShowCompModelMenu(playerid, listitem);
+	return true;
+}
+
+CMD:tdselect(playerid, params[])
+{
+	    SelectTextDraw(playerid, 0x00FF00FF); // Highlight green when hovering over
+        SendClientMessage(playerid, 0xFFFFFFFF, "SERVER: Please select a textdraw!");
+        return 1;
+}
+
+*/
+/*
+//PreviewModelDialog.inc
+#include <PluginFreeVersion>
+#include <MemoryPluginVersion.inc>
+//works with easy dialog , didnt work with mdialog
+
+#include <easyDialog>
+
+
+/*
+stock ShowMainDialog(playerid)
+{
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+	new vehid = GetPlayerVehicleID(playerid);
+	new themodel = GetVehicleModel(vehid);
+	new digcap[64];
+	format(digcap, sizeof(digcap), "{FFFFFF}%s Tuning Menu", gggGlobalVehicleNames[themodel - 400]);
+	Dialog_Show(playerid, TMEN, DIALOG_STYLE_LIST, digcap, "{FFFFFF}SPOILER\nHOOD\nROOF\nSIDESKIRT\nLAMPS\nNITRO\nEXHAUST\nWHEELS\nSTEREO\nHYDRAULICS\nFRONT BUMPER\nREAR BUMPER\nVents\nFRONT BULLBAR\nREAR BULLBAR\nFront Sign\nBullbar\nPaint Jobs\nColors\nNeons", "OK", "CLOSE");
+	return 1;
+}
+
+CMD:tuneme(playerid, params[])
+{
+	ShowMainDialog(playerid);
+	return true;
+}
+
+// SA-MP LIMITS
+#define MAX_ROWS 255
+#define MAX_COLUMN 127
+#define MAX_CAP 63
+#define MAX_INF 3500
+
+new bool:nocomps[MAX_VEHICLES];
+
+Dialog:TMEN(playerid, response, listitem, inputtext[]) 
+{
+    if (response) 
+	{
+		if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "GET A VEHICLE!.");
+		new digcap[MAX_CAP];
+		new vehid = GetPlayerVehicleID(playerid);
+		new themodel = GetVehicleModel(vehid);
+		format(digcap, sizeof(digcap), "{FFFFFF}%s %s Tuning Menu", gggGlobalVehicleNames[themodel - 400], gCompSlot[listitem]);
+		new count = 0, slots[MAX_INF];
+		strcat(slots, "\\c{FFFFFF}Type\tPrice");
+		for(new cid = 1000; cid < 1194; cid++)
+		{
+			//new c = cid - 1000;
+			if(!strcmp(gCompSlot[listitem], componentlist[cid - 1000][comppart], true))
+			{
+				//printf("pID = %d, vID = %d, mID = %d, cid = %d, c = %d, listitem = %d, gCompSlot[listitem] = %s, componentlist[c][comppart] = %s, count = %d, activecomponents[vehid][count] = %d, slots = %s, digcap = %s", playerid, vehid, themodel, cid, c, listitem, gCompSlot[listitem], componentlist[c][comppart], count, activecomponents[vehid][count], slots, digcap);
+				if(VehicleCanHaveComponent(themodel, cid))
+				{
+					new temp[MAX_ROWS];
+					activecomponents[vehid][count] = cid; // Save component cid in the first slot of activecomponents
+			        format(temp, sizeof(temp), "\n%i\t%s\t$%d", cid, componentlist[cid - 1000][comptype], componentlist[cid - 1000][compcost]);
+					strcat(slots, temp);
+					count++;
+					nocomps[vehid] = false;
+				}
+				if(count == MAX_ROWS)
+	            {
+	                break;
+	            }
+	            else continue;
+		    }
+		}
+		if(count == 0)
+		{
+			strcat(slots, "\nTHIS VEHICLE DON'T HAVE ANY COMPONENTS");
+			nocomps[vehid] = true;
+		}
+		Dialog_Show(playerid, TSO, DIALOG_STYLE_PREVIEW_MODEL, digcap, slots, "OK", "Back");
+	}
+	return 1;
+}
+
+new confmoney[MAX_PLAYERS];
+new confcompid[MAX_VEHICLES];
+
+Dialog:TSO(playerid, response, listitem, inputtext[]) 
+{
+    if (response) 
+	{
+		new vid = GetPlayerVehicleID(playerid);
+		if(nocomps[vid] == true) return ShowMainDialog(playerid);
+		AddVehicleComponent(vid, activecomponents[vid][listitem]);
+		new Float:posX, Float:posY, Float:posZ;
+		GetPlayerPos(playerid, posX, posY, posZ);
+		PlayerPlaySound(playerid, 1133, posX, posY, posZ);
+		confmoney[playerid] = componentlist[activecomponents[vid][listitem]][compcost];
+		confcompid[vid] = activecomponents[vid][listitem];
+		Dialog_Show(playerid, CONFIRM_PURCHASE, DIALOG_STYLE_MSGBOX, "{FFFFFF}CONFIRM PURCHASE", "{FFFFFF}CONFIRM PURCHASE", "PURCHASE", "Back");  
+    }
+	else
+	{
+		ShowMainDialog(playerid);
+	}
+    return 1;
+}
+
+Dialog:CONFIRM_PURCHASE(playerid, response, listitem, inputtext[]) 
+{
+	if (response) 
+	{
+		GivePlayerMoney(playerid, -confmoney[playerid]);
+	}
+	else
+	{
+		new vid = GetPlayerVehicleID(playerid);
+		RemoveVehicleComponent(vid, confcompid[vid]);
+		ShowMainDialog(playerid);
+	}
+    return 1;
+}
+*/
+/*
+CMD:skine(playerid) {
+    const MAX_SKINS = 312;
+    new subString[16];
+    static string[MAX_SKINS * sizeof(subString)];
+    if (string[0] == EOS) {
+        for (new i; i < MAX_SKINS; i++) {
+            format(subString, sizeof(subString), "%i\tID: %i\n", i, i);
+            strcat(string, subString);
+        }
+    }
+    return Dialog_Show(playerid, skine, DIALOG_STYLE_PREVIEW_MODEL, "Skin Selection Dialog", string, "Select", "Cancel");
+}
+
+Dialog:skine(playerid, dialogid, response, listitem, inputtext[]) {
+    if (dialogid == 0) {
+        if (response) {
+            SetPlayerSkin(playerid, listitem);
+            GameTextForPlayer(playerid, "~g~Skin Changed!", 3000, 3);
+        }
+    }
+    return 1;
+} 
+*/
+/*
+enum E_WEAPON_SHOP_DATA {
+    WEAPON_MODELID,
+    WEAPON_NAME[35],
+    WEAPON_PRICE,
+    WEAPON_AMMO,
+    WEAPON_ID
+};
+new const WEAPON_SHOP[][E_WEAPON_SHOP_DATA] = {
+    {335, "Knife", 0, 1, WEAPON_KNIFE},
+    {341, "Chainsaw", 1500, 1, WEAPON_CHAINSAW},
+    {342, "Grenade", 1545, 1, WEAPON_GRENADE},
+    {343, "Moltove", 1745, 1, WEAPON_MOLTOV},
+    {347, "Silenced 9mm", 1500, 150, WEAPON_SILENCED},
+    {348, "Desert Eagle", 3199, 150, WEAPON_DEAGLE},
+    {350, "Sawed Off Shotgun", 4999, 100, WEAPON_SAWEDOFF},
+    {351, "Spas12 Shotgun", 3870, 100, WEAPON_SHOTGSPA},
+    {352, "Micro-UZI", 3500, 300, WEAPON_UZI},
+    {353, "MP5", 2999, 200, WEAPON_MP5},
+    {372, "Tec-9", 3500, 300, WEAPON_TEC9},
+    {358, "Sniper Rifle", 4999, 50, WEAPON_SNIPER},
+    {355, "Ak47", 2999, 200, WEAPON_AK47},
+    {356, "M4", 3155, 200, WEAPON_M4},
+    {359, "RPG", 1999, 1, WEAPON_ROCKETLAUNCHER},
+    {361, "Flamethrower", 3500, 350, WEAPON_FLAMETHROWER},
+    {362, "Minigun", 10000, 350, WEAPON_MINIGUN},
+    {363, "Satchel Charge", 1999, 2, WEAPON_SATCHEL},
+    {365, "Spray Can", 800, 200, WEAPON_SPRAYCAN},
+    {366, "Fire Extinguisher", 855, 200, WEAPON_FIREEXTINGUISHER}
+};
+CMD:weapons(playerid) {
+    new subString[64];
+    static string[sizeof(WEAPON_SHOP) * sizeof(subString)];
+    if (string[0] == EOS) {
+        for (new i; i < sizeof(WEAPON_SHOP); i++) {
+            format(subString, sizeof(subString), "%i(0.0, 0.0, -50.0, 1.5)\t%s~n~~g~~h~$%i\n", WEAPON_SHOP[i][WEAPON_MODELID], WEAPON_SHOP[i][WEAPON_NAME], WEAPON_SHOP[i][WEAPON_PRICE]);
+            strcat(string, subString);
+        }
+    }
+    return ShowPlayerDialog(playerid, 1, DIALOG_STYLE_PREVIEW_MODEL, "Weapon Shop Dialog", string, "Purchase", "Cancel");
+}
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
+    if (dialogid == 1) {
+        if (response) {
+            if (GetPlayerMoney(playerid) < WEAPON_SHOP[listitem][WEAPON_PRICE]) {
+                SendClientMessage(playerid, 0xAA0000FF, "Not enough money to purchase this gun!");
+                return cmd_weapons(playerid);
+            }
+            
+            GivePlayerMoney(playerid, -WEAPON_SHOP[listitem][WEAPON_PRICE]);
+            GivePlayerWeapon(playerid, WEAPON_SHOP[listitem][WEAPON_ID], WEAPON_SHOP[listitem][WEAPON_AMMO]);
+            
+            GameTextForPlayer(playerid, "~g~Gun Purchased!", 3000, 3);
+        }
+    }
+    return 1;
+} 
+*/
+
