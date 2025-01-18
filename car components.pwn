@@ -660,6 +660,8 @@ Dialog:CONFIRM_PURCHASE(playerid, response, listitem, inputtext[])
 }
 */
 
+// in game clicking textdraws didnt work for both eSelection and PreviewModelDialog
+
 /*
 #include <eSelection>
 
