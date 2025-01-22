@@ -1044,3 +1044,112 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]) {
 } 
 */
 
+/*
+//main tune menu, id : TMEN
+//get car components per slot and if car dont have any components for that don't show it
+/*
+new diagtexte
+
+for new i sizeof gCompSlot i++
+new tepetexte
+format tempetexte "/n%s" gCompSlot(i)
+strcat diagtexte tempetexte
+//
+diag-show p.id t.men s.list digcap giagtexte
+*/
+	
+/*             
+new vehid = GetPlayerVehicleID(playerid);            
+new themodel = GetVehicleModel(vehid);
+new dtex, ttex
+new counter(sizeofgcompslot)
+for new f size of gcompslot f++
+for(new cid = 1000; cid < 1194; cid++)
+if(!strcmp(gCompSlot[f], componentlist[cid - 1000][comppart], true))
+if(VehicleCanHaveComponent(themodel, cid))
+counter(f)++;
+if counter(f) != 0 or more than 0 // means car has components in this slot 
+//then add this slot to list
+format ttex %s gcompslot(f)
+strcat dtex ttex
+#end
+dialog show p.id etc dtex
+/* 
+for each of component slot names in gcompslot check if it has any components with same slot name then check if car can have any components from this slot if car can have components from this slot add category to main dialog which is list if slots for player to choose 
+*/
+/*
+save number of slot used in previous dialog so it be correct in next dialog
+*/
+new x
+new activeslotnum
+
+for new f size of gcompslot f++
+for(new cid = 1000; cid < 1194; cid++)
+if(!strcmp(gCompSlot[f], componentlist[cid - 1000][comppart], true))
+if(VehicleCanHaveComponent(themodel, cid))
+counter(f)++;
+
+if counter(f) == 1
+(
+activeslotnum(vid)(x) = f
+x++
+)
+
+if counter(f) != 0 or more than 0 // means car has components in this slot 
+//then add this slot to list
+format ttex %s gcompslot(f)
+strcat dtex ttex
+
+/*
+now we use activeslotnum(vid)(x) in next dialog 
+here we need to check component slot namw with slot name in previous dialog again, the slot name id in gcompslot is saved at activeslotnum(vid)(x)
+*/
+
+new digcap[MAX_CAP];              
+new vehid = GetPlayerVehicleID(playerid);               
+new themodel = GetVehicleModel(vehid);
+                
+new vid = GetPlayerVehicleID(playerid); 
+
+format(digcap, sizeof(digcap), "{FFFFFF}%s %s Tuning Menu", gggGlobalVehicleNames[themodel - 400], gCompSlot[activeslotnum(vid)(listitem)]);
+                
+new count = 0, slots[MAX_INF];
+strcat(slots, "{FFFFFF}Type\tPrice");
+for(new cid = 1000; cid < 1194; cid++)
+                {  
+if(!strcmp(gCompSlot[activeslotnum(vid)(listitem)], componentlist[cid - 1000][comppart], true))
+                        {
+                                
+//printf("pID = %d, vID = %d, mID = %d, cid = %d, c = %d, listitem = %d, gCompSlot[activeslotnum(vid)(listitem)] = %s, componentlist[c][comppart] = %s, count = %d, activecomponents[vehid][count] = %d, slots = %s, digcap = %s", playerid, vehid, themodel, cid, c, listitem, gCompSlot[activeslotnum(vid)(listitem)], componentlist[c][comppart], count, activecomponents[vehid][count], slots, digcap);
+                                if(VehicleCanHaveComponent(themodel, cid))
+                                {
+                                        
+new temp[MAX_ROWS];
+                                        activecomponents[vehid][count] = cid; 
+// Save component cid in the first slot of activecomponents
+                                
+format(temp, sizeof(temp), "\n%s\t$%d", componentlist[cid - 1000][comptype], componentlist[cid - 1000][compcost]);
+                                        strcat(slots, temp);
+                                        
+count++;
+                                        nocomps[vehid] = false;
+                                }
+                                
+if(count == MAX_ROWS)
+                    {
+                        
+break;
+                    }
+                    
+else continue;
+                    }
+                }
+                
+if(count == 0)
+                {
+                        
+strcat(slots, "\nTHIS VEHICLE DON'T HAVE ANY COMPONENTS");
+                        
+nocomps[vehid] = true;
+                }
+
