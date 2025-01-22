@@ -457,6 +457,16 @@ stock ShowMainDialog(playerid)
 	new themodel = GetVehicleModel(vehid);
 	new digcap[64];
 	format(digcap, sizeof(digcap), "{FFFFFF}%s Tuning Menu", gggGlobalVehicleNames[themodel - 400]);
+/*
+new diagtexte
+
+for new i sizeof gCompSlot i++
+new tepetexte
+format tempetexte "/n%s" gCompSlot(i)
+strcat diagtexte tempetexte
+//
+diag-show p.id t.men s.list digcap giagtexte
+*/
 	Dialog_Show(playerid, TMEN, DIALOG_STYLE_LIST, digcap, "{FFFFFF}SPOILER\nHOOD\nROOF\nSIDESKIRT\nLAMPS\nNITRO\nEXHAUST\nWHEELS\nSTEREO\nHYDRAULICS\nFRONT BUMPER\nREAR BUMPER\nVents\nFRONT BULLBAR\nREAR BULLBAR\nFront Sign\nBullbar\nPaint Jobs\nColors\nNeons", "OK", "CLOSE");
 	return 1;
 }
